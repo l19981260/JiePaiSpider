@@ -21,7 +21,10 @@ import requests
 from config import *
 from multiprocessing import Pool
 from json.decoder import JSONDecodeError
+
+
 client = pymongo.MongoClient(MONGO_URL,connect=False)
+
 db = client[MONGO_DB]
 
 
@@ -43,7 +46,7 @@ def get_page_index(offset,keyword):
             return response.text
         return None
     except RequestException:
-        print('请求索引页出错')
+        print('request index page error')
         return None
 
 def parse_page_index(html):
@@ -62,7 +65,7 @@ def get_page_detial(url):
             return response.text
         return None
     except RequestException:
-        print('请求详情页出错',url)
+        print('request detail page error',url)
         return None
 def parse_page_detial(html,url):
     soup = BeautifulSoup(html,'lxml')
@@ -83,19 +86,19 @@ def parse_page_detial(html,url):
             }
 def save_to_mongo(result):
     if db[MONGO_TABLE].insert(result):
-        print('存储到MongoDB成功',result)
+        print('save to mongodb success',result)
         return True
     return False
 
 def download_image(url):
-    print('正在下载',url)
+    print('downloading',url)
     try:
         response = requests.get(url)
         if response.status_code == 200:
             save_image(response.content)
         return None
     except RequestException:
-        print('请求图片出错')
+        print('request image error')
         return None
 
 def save_image(content):
